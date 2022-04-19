@@ -9,23 +9,22 @@ class Relation implements JsonSerializable
 {
     public function __construct(
         public RelationKind $kind,
-        public string       $otherType,
-        public string       $myField,
-        public string       $otherField
-    )
-    {
+        public string $otherType,
+        public string $myField,
+        public string $otherField
+    ) {
     }
 
-    #[ArrayShape(['Relation' => "array"])]
+    #[ArrayShape(['Relation' => 'array'])]
     public function jsonSerialize(): array
     {
         return [
             'Relation' => [
-                'kind' => $this->kind->value,
+                'kind'            => $this->kind->value,
                 'other_class_tag' => $this->otherType,
-                'my_field' => $this->myField,
-                'other_field' => $this->otherField,
-            ]
+                'my_field'        => $this->myField,
+                'other_field'     => $this->otherField,
+            ],
         ];
     }
 

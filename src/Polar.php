@@ -64,7 +64,6 @@ class Polar
             }
 
             $sources[] = new Source($contents, $filename);
-
         }
 
         $this->loadSources($sources);

@@ -8,6 +8,6 @@ class InvalidCallException extends PolarException
 {
     public function __construct(mixed $instance, string $field)
     {
-        parent::__construct(Host::repr($instance) . "::$field is not callable");
+        parent::__construct(Host::repr($instance)."::$field is not callable");
     }
 }

@@ -5,7 +5,7 @@ namespace J0sh0nat0r\Oso\DataFiltering;
 /**
  * A projection is a type and an optional field, like "User.name", "Post.user_id", or "Tag".
  * If the field name is absent, the adapter should substitute the primary key (eg. "Tag"
- * becomes "Tag.id")
+ * becomes "Tag.id").
  */
 class Projection
 {

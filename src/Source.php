@@ -11,11 +11,11 @@ class Source implements JsonSerializable
     {
     }
 
-    #[ArrayShape(['src' => "string", 'filename' => "null|string"])]
+    #[ArrayShape(['src' => 'string', 'filename' => 'null|string'])]
     public function jsonSerialize(): array
     {
         return [
-            'src' => $this->src,
+            'src'      => $this->src,
             'filename' => $this->filename,
         ];
     }

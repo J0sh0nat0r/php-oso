@@ -2,7 +2,7 @@
 
 namespace J0sh0nat0r\Oso\DataFiltering;
 
-/** 
+/**
  * @template TQuery
  * @template TResource
  */

@@ -16,14 +16,14 @@ class Ffi
     {
         $fileName = match (PHP_OS_FAMILY) {
             'Windows' => 'polar.dll',
-            'Darwin' => 'libpolar.dylib',
-            'Linux' => 'libpolar.so',
-            default => throw new Exception('Unsupported OS'),
+            'Darwin'  => 'libpolar.dylib',
+            'Linux'   => 'libpolar.so',
+            default   => throw new Exception('Unsupported OS'),
         };
 
         $this->ffi = \FFI::cdef(
-            file_get_contents(__DIR__ . '/../../lib/polar.h'),
-            __DIR__ . "/../../lib/$fileName"
+            file_get_contents(__DIR__.'/../../lib/polar.h'),
+            __DIR__."/../../lib/$fileName"
         );
     }
 

@@ -47,6 +47,7 @@ class Polar extends AutoPointer
     {
         $query = $this->polarLib->polarNewQuery($this, $queryStr, 0)->check();
         $this->processMessages();
+
         return $query;
     }
 
@@ -54,6 +55,7 @@ class Polar extends AutoPointer
     {
         $query = $this->polarLib->polarNewQueryFromTerm($this, Ffi::serialize($queryTerm), 0)->check();
         $this->processMessages();
+
         return $query;
     }
 
@@ -61,6 +63,7 @@ class Polar extends AutoPointer
     {
         $query = $this->polarLib->polarNextInlineQuery($this, 0);
         $this->processMessages();
+
         return $query;
     }
 
@@ -97,7 +100,7 @@ class Polar extends AutoPointer
             ['kind' => $kind, 'msg' => $msg] = Ffi::deserialize($msgStr);
 
             match ($kind) {
-                'Print' => trigger_error($msg),
+                'Print'   => trigger_error($msg),
                 'Warning' => trigger_error($msg, E_USER_WARNING),
                 // Ignored
                 default => null
