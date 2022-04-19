@@ -1,0 +1,42 @@
+{
+  "name": "j0sh0nat0r/oso",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "J0sh0nat0r\\Oso\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "J0sh0nat0r\\Oso\\Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "J0sh0nat0r",
+      "email": "jojo.parillon@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-ffi": "*",
+    "ext-json": "*",
+    "symfony/polyfill-php81": "^1.25"
+  },
+  "require-dev": {
+    "jetbrains/phpstorm-attributes": "^1.0",
+    "pestphp/pest": "^1.21",
+    "phpstan/phpstan": "^1.5"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/pest",
+    "test-coverage": "vendor/bin/pest --coverage"
+  }
+}
