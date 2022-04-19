@@ -8,6 +8,6 @@ class InvalidFieldNameException extends PolarException
 {
     public function __construct(mixed $name)
     {
-        parent::__construct(Host::repr($name) . ' is not a valid field name');
+        parent::__construct(Host::repr($name).' is not a valid field name');
     }
 }

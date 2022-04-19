@@ -8,6 +8,6 @@ class InvalidIteratorException extends PolarException
 {
     public function __construct($term)
     {
-        parent::__construct(Host::repr($term) . ' is not iterable');
+        parent::__construct(Host::repr($term).' is not iterable');
     }
 }

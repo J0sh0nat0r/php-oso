@@ -67,7 +67,7 @@ class Query implements IteratorAggregate
                     yield $this->host->toPhpArray($data['bindings']);
                     break;
                 default:
-                {
+
                     $handler = "handle$kind";
 
                     if (!method_exists($this, $handler)) {
@@ -76,7 +76,7 @@ class Query implements IteratorAggregate
 
                     $this->$handler($data);
                     break;
-                }
+
             }
         }
     }
@@ -150,7 +150,7 @@ class Query implements IteratorAggregate
         $call = $data['constructor']['value']['Call'];
 
         if (isset($call['kwargs'])) {
-            throw new InternalErrorException("kwargs are currently unsupported");
+            throw new InternalErrorException('kwargs are currently unsupported');
         }
 
         $this->host->makeInstance($call['name'], $this->host->toPhpArray($call['args']), $instanceId);
@@ -165,9 +165,9 @@ class Query implements IteratorAggregate
 
             if ($value instanceof Iterator) {
                 $iterator = $value;
-            } else if ($value instanceof IteratorAggregate) {
+            } elseif ($value instanceof IteratorAggregate) {
                 $iterator = new IteratorIterator($value->getIterator());
-            } else if (is_array($value)) {
+            } elseif (is_array($value)) {
                 $iterator = new ArrayIterator($value);
             } else {
                 throw new InvalidIteratorException($value);

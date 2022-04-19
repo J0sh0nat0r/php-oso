@@ -44,10 +44,10 @@ class Oso extends Polar
                 if (!$allowWildcard) {
                     throw new OsoException(
                         '"The result of authorizedActions contained an "unconstrained" action that'
-                        . ' could represent any' . PHP_EOL
-                        . ' action, but allowWildcard was set to false. To fix,' . PHP_EOL
-                        . ' set allowWildcard to true and compare with the "*' . PHP_EOL
-                        . ' string."'
+                        .' could represent any'.PHP_EOL
+                        .' action, but allowWildcard was set to false. To fix,'.PHP_EOL
+                        .' set allowWildcard to true and compare with the "*'.PHP_EOL
+                        .' string."'
                     );
                 }
 
@@ -59,7 +59,6 @@ class Oso extends Polar
 
         return array_keys($actions);
     }
-
 
     /**
      * Determine the fields of `resource` on which `actor` is allowed to perform `action`.
@@ -77,10 +76,10 @@ class Oso extends Polar
                 if (!$allowWildcard) {
                     throw new OsoException(
                         '"The result of authorizedFields contained an "unconstrained" field that'
-                        . ' could represent any' . PHP_EOL
-                        . ' field, but allowWildcard was set to false. To fix,' . PHP_EOL
-                        . ' set allowWildcard to true and compare with the "*' . PHP_EOL
-                        . ' string."'
+                        .' could represent any'.PHP_EOL
+                        .' field, but allowWildcard was set to false. To fix,'.PHP_EOL
+                        .' set allowWildcard to true and compare with the "*'.PHP_EOL
+                        .' string."'
                     );
                 }
 
@@ -95,6 +94,7 @@ class Oso extends Polar
 
     /**
      * @param class-string<TResource> $resourceClass
+     *
      * @return TQuery
      */
     public function authorizedQuery(mixed $actor, mixed $action, string $resourceClass)
@@ -109,15 +109,17 @@ class Oso extends Polar
             throw new UnregisteredClassException($resourceClassType->getName());
         }
 
-        $constraint = new Expression(PolarOperator::And,
-            new Expression(PolarOperator::Isa,
+        $constraint = new Expression(
+            PolarOperator::And,
+            new Expression(
+                PolarOperator::Isa,
                 $resource,
                 new Pattern($className)
             )
         );
 
         $bindings = [
-            'resource' => $constraint
+            'resource' => $constraint,
         ];
 
         $results = $this->queryRule(
@@ -136,7 +138,7 @@ class Oso extends Polar
                 'bindings' => array_map(
                     $this->host->toPolarTerm(...),
                     $result
-                )
+                ),
             ];
         }
 

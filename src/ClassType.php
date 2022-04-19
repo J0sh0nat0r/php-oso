@@ -71,12 +71,12 @@ class ClassType
             return true;
         }
 
-        return (bool)$this->reflectionClass?->isInstance($instance);
+        return (bool) $this->reflectionClass?->isInstance($instance);
     }
 
     public function isSubclassOf(ClassType $classType): bool
     {
-        return (bool)$this->reflectionClass?->isSubclassOf($classType->reflectionClass);
+        return (bool) $this->reflectionClass?->isSubclassOf($classType->reflectionClass);
     }
 
     public function getParentType(): false|self

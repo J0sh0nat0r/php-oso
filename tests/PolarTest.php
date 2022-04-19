@@ -47,7 +47,7 @@ test('query predicate with object', function () {
 
     $this->assertEquals(
         [['result' => 1]],
-        iterator_to_array($this->polar->queryRule('f', [], false,1, new Variable('result'))),
+        iterator_to_array($this->polar->queryRule('f', [], false, 1, new Variable('result'))),
         'Predicate query with Variable failed.'
     );
 });

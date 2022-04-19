@@ -4,7 +4,9 @@ namespace J0sh0nat0r\Oso\Tests\PolarTestSupport;
 
 class MyClass
 {
-    public function __construct(public int $id, public string $name) {}
+    public function __construct(public int $id, public string $name)
+    {
+    }
 
     public function myMethod(string $arg): string
     {
@@ -35,5 +37,4 @@ class MyClass
     public function myReturnNull(): void
     {
     }
-
 }

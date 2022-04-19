@@ -28,7 +28,7 @@ class TypeMap implements ArrayAccess, IteratorAggregate
             return isset($this->classTypes[$offset->getName()]);
         }
 
-        if(is_string($offset)) {
+        if (is_string($offset)) {
             return isset($this->namedTypes[$offset]);
         }
 
@@ -42,7 +42,7 @@ class TypeMap implements ArrayAccess, IteratorAggregate
             return $this->classTypes[$offset->getName()];
         }
 
-        if(is_string($offset)) {
+        if (is_string($offset)) {
             return $this->namedTypes[$offset];
         }
 
@@ -58,15 +58,17 @@ class TypeMap implements ArrayAccess, IteratorAggregate
 
         if ($offset instanceof ClassType) {
             $this->classTypes[$offset->getName()] = $value;
+
             return;
         }
 
-        if(is_string($offset)) {
+        if (is_string($offset)) {
             $this->namedTypes[$offset] = $value;
+
             return;
         }
 
-        throw new InvalidArgumentException('Illegal offset type: ' . get_debug_type($offset));
+        throw new InvalidArgumentException('Illegal offset type: '.get_debug_type($offset));
     }
 
     public function offsetUnset(mixed $offset): void
@@ -77,7 +79,7 @@ class TypeMap implements ArrayAccess, IteratorAggregate
             return;
         }
 
-        if(is_string($offset)) {
+        if (is_string($offset)) {
             unset($this->namedTypes[$offset]);
 
             return;

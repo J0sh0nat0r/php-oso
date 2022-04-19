@@ -9,11 +9,10 @@ use J0sh0nat0r\Oso\PolarComparisonOperator;
 class Condition
 {
     public function __construct(
-        public Immediate|Projection    $lhs,
+        public Immediate|Projection $lhs,
         public PolarComparisonOperator $cmp,
-        public Immediate|Projection    $rhs
-    )
-    {
+        public Immediate|Projection $rhs
+    ) {
     }
 
     public static function parse(Host $host, array $data): self
@@ -31,8 +30,8 @@ class Condition
 
         return match ($type) {
             'Immediate' => Immediate::parse($host, $data['Immediate']),
-            'Field' => Projection::parse($data['Field']),
-            default => throw new InternalErrorException("Unknown datum type: $type")
+            'Field'     => Projection::parse($data['Field']),
+            default     => throw new InternalErrorException("Unknown datum type: $type")
         };
     }
 }

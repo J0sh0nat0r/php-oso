@@ -8,16 +8,15 @@ use J0sh0nat0r\Oso\TypeMap;
 class Filter
 {
     /**
-     * @param array<Relation> $relations
+     * @param array<Relation>         $relations
      * @param array<array<Condition>> $conditions
      */
     public function __construct(
-        public string  $root,
-        public array   $relations,
-        public array   $conditions,
+        public string $root,
+        public array $relations,
+        public array $conditions,
         public TypeMap $types
-    )
-    {
+    ) {
     }
 
     public static function parse(Host $host, array $data): self
@@ -28,8 +27,8 @@ class Filter
         );
 
         $conditions = array_map(
-            static fn(array $andGroup) => array_map(
-                static fn(array $conditionData) => Condition::parse($host, $conditionData),
+            static fn (array $andGroup) => array_map(
+                static fn (array $conditionData) => Condition::parse($host, $conditionData),
                 $andGroup
             ),
             $data['conditions']
