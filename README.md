@@ -70,6 +70,7 @@ POLAR
 echo 'Larry can push to gmail: ' . var_export($oso->isAllowed($usersDb['larry'], 'push', $reposDb['gmail']), true) . PHP_EOL;
 
 // Using queries as iterators
+// Note that in practice `authorizedActions` would be used here
 foreach ($reposDb as $repo) {
     echo "$repo->name:", PHP_EOL;
 

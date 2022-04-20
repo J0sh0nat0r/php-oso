@@ -99,12 +99,13 @@ class Polar extends AutoPointer
         try {
             ['kind' => $kind, 'msg' => $msg] = Ffi::deserialize($msgStr);
 
-            match ($kind) {
-                'Print'   => trigger_error($msg),
-                'Warning' => trigger_error($msg, E_USER_WARNING),
-                // Ignored
-                default => null
+            $stream = match ($kind) {
+                'Print'   => STDOUT,
+                'Warning' => STDERR,
+                default => throw new InternalErrorException
             };
+
+            fwrite($stream, $msg . PHP_EOL);
         } catch (InternalErrorException) {
             throw new OsoException("Invalid JSON message: $msgStr");
         }
