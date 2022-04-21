@@ -21,8 +21,7 @@
   "require": {
     "php": ">=8.1",
     "ext-ffi": "*",
-    "ext-json": "*",
-    "symfony/polyfill-php81": "^1.25"
+    "ext-json": "*"
   },
   "require-dev": {
     "jetbrains/phpstorm-attributes": "^1.0",
