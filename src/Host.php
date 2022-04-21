@@ -270,8 +270,8 @@ class Host
         [$left, $right] = $args;
 
         return match ($op) {
-            'Eq'    => $left === $right,
-            'Neq'   => $left !== $right,
+            'Eq'    => is_object($left) && is_object($right) ? $left == $right : $left === $right,
+            'Neq'   => is_object($left) && is_object($right) ? $left != $right : $left !== $right,
             'Geq'   => $left >= $right,
             'Gt'    => $left > $right,
             'Leq'   => $left <= $right,
