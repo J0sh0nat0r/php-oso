@@ -7,8 +7,8 @@ use J0sh0nat0r\Oso\Tests\PolarTestSupport\MySubClass;
 use J0sh0nat0r\Oso\Variable;
 
 beforeEach(function () {
-    // Disable error reporting (loading policies without allow triggers warnings)
-    error_reporting(E_USER_ERROR);
+    // Suppress messages (loading policies without allow triggers warnings)
+    \J0sh0nat0r\Oso\FFI\Polar::setMessageHandler(static fn () => null);
 
     $this->polar = new Polar();
     $this->polar->registerClass(MyClass::class, 'MyClass');

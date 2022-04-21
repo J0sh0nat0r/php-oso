@@ -1,6 +1,7 @@
 {
   "name": "j0sh0nat0r/oso",
   "type": "library",
+  "description": "A PHP library for interacting with the Oso authorization library.",
   "license": "MIT",
   "autoload": {
     "psr-4": {

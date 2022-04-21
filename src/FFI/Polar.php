@@ -8,6 +8,11 @@ use J0sh0nat0r\Oso\Source;
 
 class Polar extends AutoPointer
 {
+    /**
+     * @var null|callable(string): void
+     */
+    protected static $messageHandler;
+
     public function newId(): int
     {
         return $this->polarLib->polarGetExternalId($this);
@@ -94,15 +99,34 @@ class Polar extends AutoPointer
         return $this->polarLib->polarFree($this);
     }
 
+    /**
+     * @param callable(string): void $handler
+     */
+    public static function setMessageHandler(callable $handler): void
+    {
+        self::$messageHandler = $handler;
+    }
+
+    public static function resetMessageHandler(): void
+    {
+        self::$messageHandler = null;
+    }
+
     public static function processMessage(string $msgStr): void
     {
+        if (isset(self::$messageHandler)) {
+            (self::$messageHandler)($msgStr);
+
+            return;
+        }
+
         try {
             ['kind' => $kind, 'msg' => $msg] = Ffi::deserialize($msgStr);
 
             $stream = match ($kind) {
                 'Print'   => STDOUT,
                 'Warning' => STDERR,
-                default => throw new InternalErrorException
+                default   => throw new InternalErrorException
             };
 
             fwrite($stream, $msg . PHP_EOL);
