@@ -129,7 +129,7 @@ class Polar extends AutoPointer
                 default   => throw new InternalErrorException()
             };
 
-            fwrite($stream, $msg . PHP_EOL);
+            fwrite($stream, $msg.PHP_EOL);
         } catch (InternalErrorException) {
             throw new OsoException("Invalid JSON message: $msgStr");
         }
