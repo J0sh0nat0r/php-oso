@@ -126,7 +126,7 @@ class Polar extends AutoPointer
             $stream = match ($kind) {
                 'Print'   => STDOUT,
                 'Warning' => STDERR,
-                default   => throw new InternalErrorException
+                default   => throw new InternalErrorException()
             };
 
             fwrite($stream, $msg . PHP_EOL);
