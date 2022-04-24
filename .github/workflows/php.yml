@@ -15,6 +15,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Setup PHP with PCOV
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        coverage: pcov
+
     - uses: actions/checkout@v3
 
     - name: Validate composer.json and composer.lock
@@ -36,6 +42,6 @@ jobs:
       run: composer run-script test -- --coverage-clover coverage.xml
 
     - name: Codecov
-      uses: codecov/codecov-action@v3.1.0
+      uses: codecov/codecov-action@v3
       with:
         files: coverage.xml
