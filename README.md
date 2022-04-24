@@ -1,5 +1,10 @@
 # Oso PHP
 
+[![Test](https://github.com/J0sh0nat0r/php-oso/actions/workflows/test.yml/badge.svg)](https://github.com/J0sh0nat0r/php-oso/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/J0sh0nat0r/php-oso/branch/master/graph/badge.svg?token=UuG4plut6l)](https://codecov.io/gh/J0sh0nat0r/php-oso)
+[![StyleCI](https://github.styleci.io/repos/483424130/shield)](https://github.styleci.io/repos/483424130)
+
+
 This library integrates the authorization framework [Oso](https://github.com/osohq/oso) with PHP, since it currently
 lacks an official integration.
 
