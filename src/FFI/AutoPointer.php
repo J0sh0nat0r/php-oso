@@ -2,6 +2,7 @@
 
 namespace J0sh0nat0r\Oso\FFI;
 
+use FFI;
 use FFI\CData;
 
 abstract class AutoPointer
@@ -10,7 +11,7 @@ abstract class AutoPointer
 
     public function __construct(protected PolarLib $polarLib, ?CData $ptr)
     {
-        $this->ptr = $ptr ?? \FFI::cast('void*', 0);
+        $this->ptr = $ptr ?? FFI::cast('void*', 0);
     }
 
     public function get(): CData
@@ -20,7 +21,7 @@ abstract class AutoPointer
 
     public function isNull(): bool
     {
-        return \FFI::isNull($this->ptr);
+        return FFI::isNull($this->ptr);
     }
 
     public function __destruct()
