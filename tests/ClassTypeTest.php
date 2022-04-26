@@ -1,5 +1,7 @@
 <?php
 
+namespace J0sh0nat0r\Oso\Tests;
+
 use J0sh0nat0r\Oso\ClassType;
 use J0sh0nat0r\Oso\Tests\ClassTypeTestSupport\Animal;
 use J0sh0nat0r\Oso\Tests\ClassTypeTestSupport\Cat;
