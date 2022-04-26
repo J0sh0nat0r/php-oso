@@ -63,11 +63,11 @@ it('returns user provided name from cacheClass', function ($className, $customNa
 })->with([
     Role::class,
     User::class,
-    UserSubclass::class
+    UserSubclass::class,
 ])->with([
     'Foo',
     'Bar',
-    'Baz'
+    'Baz',
 ]);
 
 it('throws when caching duplicate classes', function ($firstClass, $firstAlias, $secondAlias) {
@@ -75,19 +75,19 @@ it('throws when caching duplicate classes', function ($firstClass, $firstAlias, 
 
     $this->host->cacheClass($classType, $firstAlias, []);
 
-    expect(fn() => $this->host->cacheClass($classType, $secondAlias, []))
+    expect(fn () => $this->host->cacheClass($classType, $secondAlias, []))
         ->toThrow(DuplicateClassAliasException::class);
 })->with([
     [Role::class, 'Role', 'Role'],
     [User::class, null, null],
-    [UserSubclass::class, 'UserSubclass', null]
+    [UserSubclass::class, 'UserSubclass', null],
 ]);
 
 it('returns the TypeMap', function () {
     $classType = ClassType::fromName('string');
 
     $this->host->cacheClass($classType, 'myString', [
-        'foo' => 'bar'
+        'foo' => 'bar',
     ]);
 
     expect($this->host->getTypes()[$classType])
@@ -95,7 +95,7 @@ it('returns the TypeMap', function () {
         ->toHaveProperty('name', 'myString')
         ->toHaveProperty('classType', $classType)
         ->toHaveProperty('fields', [
-            'foo' => 'bar'
+            'foo' => 'bar',
         ]);
 });
 
@@ -103,7 +103,7 @@ it('returns cached types', function () {
     $classType = ClassType::fromName('boolean');
 
     $this->host->cacheClass($classType, 'myBoolean', [
-        'foo' => 'bar'
+        'foo' => 'bar',
     ]);
 
     expect($this->host->getType($classType))
@@ -111,7 +111,7 @@ it('returns cached types', function () {
         ->toHaveProperty('name', 'myBoolean')
         ->toHaveProperty('classType', $classType)
         ->toHaveProperty('fields', [
-            'foo' => 'bar'
+            'foo' => 'bar',
         ]);
 });
 
@@ -137,7 +137,7 @@ it('returns cached instances', function () {
 });
 
 it('throws when attempting to retrieve unregistered instances', function () {
-    expect(fn() => $this->host->getInstance(42))
+    expect(fn () => $this->host->getInstance(42))
         ->toThrow(UnregisteredInstanceException::class, 'Unregistered instance: 42');
 });
 
@@ -161,14 +161,14 @@ it('makes an instance', function () {
 });
 
 it('throws when attempting to make instances of unregistered types', function () {
-    expect(fn() => $this->host->makeInstance('FooBar', [], 0))
+    expect(fn () => $this->host->makeInstance('FooBar', [], 0))
         ->toThrow(UnregisteredClassException::class, 'Unregistered class: FooBar.');
 });
 
 it('throws when attempting to make instances of primitive types', function () {
     $this->host->cacheClass(ClassType::fromName('boolean'), null, []);
 
-    expect(fn() => $this->host->makeInstance('boolean', [], 0))
+    expect(fn () => $this->host->makeInstance('boolean', [], 0))
         ->toThrow(InstantiationException::class, 'The type boolean is not instantiable');
 });
 
@@ -193,7 +193,7 @@ test('isa with cached instances', function () {
 test('isaWithPath primitive', function () {
     $this->host->cacheClass(ClassType::fromName('string'), null, []);
     $this->host->cacheClass(ClassType::fromName(UserProfile::class), 'UserProfile', [
-        'avatarUrl' => 'string'
+        'avatarUrl' => 'string',
     ]);
 
     expect($this->host->isaWithPath('UserProfile', [string_term('avatarUrl')], 'string'))
@@ -205,7 +205,7 @@ test('isaWithPath primitive', function () {
 test('isaWithPath class', function () {
     $this->host->cacheClass(ClassType::fromName(UserProfile::class), 'UserProfile', []);
     $this->host->cacheClass(ClassType::fromName(User::class), 'User', [
-        'profile' => 'UserProfile'
+        'profile' => 'UserProfile',
     ]);
 
     expect($this->host->isaWithPath('User', [string_term('profile')], 'UserProfile'))
@@ -217,10 +217,10 @@ test('isaWithPath class', function () {
 test('isaWithPath nested', function () {
     $this->host->cacheClass(ClassType::fromName('string'), null, []);
     $this->host->cacheClass(ClassType::fromName(UserProfile::class), 'UserProfile', [
-        'avatarUrl' => 'string'
+        'avatarUrl' => 'string',
     ]);
     $this->host->cacheClass(ClassType::fromName(User::class), 'User', [
-        'profile' => 'UserProfile'
+        'profile' => 'UserProfile',
     ]);
 
     expect($this->host->isaWithPath('User', [string_term('profile'), string_term('avatarUrl')], 'string'))->toBeTrue()
@@ -233,7 +233,7 @@ test('isaWithPath one relationship', function () {
             'User',
             'father_name',
             'name'
-        )
+        ),
     ]);
 
     expect($this->host->isaWithPath('User', [string_term('father')], 'User'))->toBeTrue();
@@ -246,7 +246,7 @@ test('isaWithPath many relationship', function () {
             'User',
             'friend_names',
             'name'
-        )
+        ),
     ]);
 
     expect($this->host->isaWithPath('User', [string_term('friends')], 'array'))->toBeTrue();
@@ -255,7 +255,7 @@ test('isaWithPath many relationship', function () {
 test('isaWithPath throws on invalid field names', function () {
     $this->host->cacheClass(ClassType::fromName(User::class), 'User', []);
 
-    expect(fn() => $this->host->isaWithPath('User', [int_term(163)], 'User'))
+    expect(fn () => $this->host->isaWithPath('User', [int_term(163)], 'User'))
         ->toThrow(InvalidFieldNameException::class, 'int is not a valid field name');
 });
 
@@ -265,10 +265,10 @@ test('isaWithPath throws on references to unregistered types', function () {
             'UserProfile',
             'name',
             'user_name'
-        )
+        ),
     ]);
 
-    expect(fn() => $this->host->isaWithPath('User', [string_term('profile')], 'UserProfile'))
+    expect(fn () => $this->host->isaWithPath('User', [string_term('profile')], 'UserProfile'))
         ->toThrow(UnregisteredClassException::class, 'Unregistered class: UserProfile.');
 });
 
@@ -352,19 +352,19 @@ it('provides a default adapter', function () {
 });
 
 test('the default adapter throws on buildQuery', function () {
-    expect(fn() => $this->host->adapter->buildQuery(new Filter('', [], [], new TypeMap())))
+    expect(fn () => $this->host->adapter->buildQuery(new Filter('', [], [], new TypeMap())))
         ->toThrow(DataFilteringConfigurationException::class);
 });
 
 test('the default adapter throws on executeQuery', function () {
-    expect(fn() => $this->host->adapter->executeQuery(null))
+    expect(fn () => $this->host->adapter->executeQuery(null))
         ->toThrow(DataFilteringConfigurationException::class);
 });
 
 it('serializes types', function () {
     $this->host->cacheClass(ClassType::fromName('string'), 'string', []);
     $this->host->cacheClass(ClassType::fromName(Role::class), 'MyRole', [
-        'userName' => 'string'
+        'userName' => 'string',
     ]);
     $this->host->cacheClass(ClassType::fromName(User::class), 'MyUser', [
         'name' => 'string',
@@ -372,7 +372,7 @@ it('serializes types', function () {
             'MyRole',
             'name',
             'userName'
-        )
+        ),
     ]);
 
     $serializedTypes = $this->host->serializeTypes();
@@ -382,14 +382,14 @@ it('serializes types', function () {
         ->and($serializedTypes['MyRole'])
         ->toHaveProperty('userName', [
             'Base' => [
-                'class_tag' => 'string'
-            ]
+                'class_tag' => 'string',
+            ],
         ])
         ->and($serializedTypes['MyUser'])
         ->toHaveProperty('name', [
             'Base' => [
-                'class_tag' => 'string'
-            ]
+                'class_tag' => 'string',
+            ],
         ])
         ->toHaveProperty('role', Relation::one(
             'MyRole',
@@ -400,13 +400,12 @@ it('serializes types', function () {
 
 it('fails to serialize types referencing unregistered classes', function () {
     $this->host->cacheClass(ClassType::fromName(User::class), null, [
-        'role' => 'string'
+        'role' => 'string',
     ]);
 
-    expect(fn() => $this->host->serializeTypes())
+    expect(fn () => $this->host->serializeTypes())
         ->toThrow(UnregisteredClassException::class, 'Unregistered class: string.');
 });
-
 
 it('converts primitive values to Polar terms', function ($value, $expected) {
     $term = $this->host->toPolarTerm($value);
@@ -427,10 +426,10 @@ it('converts primitive values to Polar terms', function ($value, $expected) {
 it('throws when converting arrays with non-string keys', function () {
     $value = [
         'foo' => 'bar',
-        2 => 'baz'
+        2     => 'baz',
     ];
 
-    expect(fn() => $this->host->toPolarTerm($value))
+    expect(fn () => $this->host->toPolarTerm($value))
         ->toThrow(\InvalidArgumentException::class, 'Cannot convert array with non-string keys to Polar');
 });
 
@@ -448,7 +447,7 @@ it('converts predicates to Polar terms', function () {
         'args' => [
             string_term('Hello, %s!'),
             string_term('World'),
-        ]
+        ],
     ]));
 });
 
@@ -461,15 +460,15 @@ it('converts expressions to Polar terms', function (PolarOperator $operator, $lh
 
     expect($term)->toEqual(term('Expression', [
         'operator' => $operator->value,
-        'args' => [
+        'args'     => [
             $lhsTerm,
-            $rhsTerm
-        ]
+            $rhsTerm,
+        ],
     ]));
 })->with([
     PolarOperator::Geq,
     PolarOperator::Mul,
-    PolarOperator::Sub
+    PolarOperator::Sub,
 ])->with(function () {
     yield [false, term('Boolean', false)];
     yield [24, int_term(24)];
@@ -485,42 +484,42 @@ it('converts tag only patterns to Polar terms', function () {
 
     expect($term)->toEqual(term('Pattern', [
         'Instance' => [
-            'tag' => 'MyTag',
+            'tag'    => 'MyTag',
             'fields' => [
-                'fields' => new stdClass()
-            ]
-        ]
+                'fields' => new stdClass(),
+            ],
+        ],
     ]));
 });
 
 it('converts field only patterns to Polar terms', function () {
     $term = $this->host->toPolarTerm(new Pattern(fields: [
-        'foo' => 'bar'
+        'foo' => 'bar',
     ]));
 
     expect($term)->toEqual(term('Pattern', [
         'Dictionary' => [
             'fields' => [
-                'foo' => string_term('bar')
-            ]
-        ]
+                'foo' => string_term('bar'),
+            ],
+        ],
     ]));
 });
 
 it('converts full patterns to Polar terms', function () {
     $term = $this->host->toPolarTerm(new Pattern('TheTag', [
-        'bar' => 181
+        'bar' => 181,
     ]));
 
     expect($term)->toEqual(term('Pattern', [
         'Instance' => [
-            'tag' => 'TheTag',
+            'tag'    => 'TheTag',
             'fields' => [
                 'fields' => [
-                    'bar' => int_term(181)
-                ]
-            ]
-        ]
+                    'bar' => int_term(181),
+                ],
+            ],
+        ],
     ]));
 });
 
@@ -584,46 +583,46 @@ it('converts values to Polar terms and back again', function ($value) {
     new Expression(PolarOperator::Geq, 5, 10),
     new Pattern('MyTag'),
     new Pattern(fields: [
-        'qux' => 22
+        'qux' => 22,
     ]),
     new Pattern('TheTag', [
-        'test' => 'foo'
+        'test' => 'foo',
     ]),
     ClassType::fromName(User::class),
-    new User('Alice')
+    new User('Alice'),
 ]);
 
-#[ArrayShape(['value' => "array"])]
+#[ArrayShape(['value' => 'array'])]
 function instance_term(int $id): array
 {
     return term('ExternalInstance', [
-        'instance_id' => $id
+        'instance_id' => $id,
     ]);
 }
 
-#[ArrayShape(['value' => "array"])]
+#[ArrayShape(['value' => 'array'])]
 function int_term(int $value): array
 {
     return term('Number', [
-        'Integer' => $value
+        'Integer' => $value,
     ]);
 }
 
-#[ArrayShape(['value' => "array"])]
+#[ArrayShape(['value' => 'array'])]
 function float_term(float|string $value): array
 {
     return term('Number', [
-        'Float' => $value
+        'Float' => $value,
     ]);
 }
 
-#[ArrayShape(['value' => "array"])]
+#[ArrayShape(['value' => 'array'])]
 function string_term(string $value): array
 {
     return term('String', $value);
 }
 
-#[ArrayShape(['value' => "array"])]
+#[ArrayShape(['value' => 'array'])]
 function term(string $type, mixed $data): array
 {
     return ['value' => [$type => $data]];

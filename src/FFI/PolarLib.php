@@ -2,7 +2,6 @@
 
 namespace J0sh0nat0r\Oso\FFI;
 
-use Exception;
 use FFI;
 use J0sh0nat0r\Oso\Exceptions\InternalErrorException;
 use JsonException;
@@ -20,7 +19,7 @@ class PolarLib
             'Windows' => 'polar.dll',
             'Darwin'  => 'libpolar.dylib',
             'Linux'   => 'libpolar.so',
-            default   => throw new RuntimeException('Unsupported OS: ' . PHP_OS_FAMILY),
+            default   => throw new RuntimeException('Unsupported OS: '.PHP_OS_FAMILY),
         };
 
         $this->ffi = FFI::cdef(

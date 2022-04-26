@@ -94,15 +94,17 @@ class ClassType
         return new self($parent->getName(), $parent);
     }
 
-    protected static function getNormalizedType(mixed $value): string {
+    protected static function getNormalizedType(mixed $value): string
+    {
         return self::normalizeType(gettype($value));
     }
 
     /*
      * Some primitive types should be considered to be equivalent, so we must normalize the names
      */
-    protected static function normalizeType(string $type): string {
-        return match($type) {
+    protected static function normalizeType(string $type): string
+    {
+        return match ($type) {
             'double', 'float', => 'float',
             'resource', 'resource (closed)' => 'resource',
             default => $type
