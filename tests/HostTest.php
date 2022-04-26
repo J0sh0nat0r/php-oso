@@ -411,17 +411,17 @@ it('converts primitive values to Polar terms', function ($value, $expected) {
     $term = $this->host->toPolarTerm($value);
 
     expect($term)->toEqual($expected);
-})->with(static function () {
-    yield [true, term('Boolean', true)];
-    yield [24, int_term(24)];
-    yield [6.626, float_term(6.626)];
-    yield [NAN, float_term('NaN')];
-    yield [INF, float_term('Infinity')];
-    yield [-INF, float_term('-Infinity')];
-    yield ['Pivity', string_term('Pivity')];
-    yield [['foo', 'bar'], term('List', [string_term('foo'), string_term('bar')])];
-    yield [['foo' => 'bar'], term('Dictionary', ['fields' => ['foo' => string_term('bar')]])];
-});
+})->with([
+    [true, term('Boolean', true)],
+    [24, int_term(24)],
+    [6.626, float_term(6.626)],
+    [NAN, float_term('NaN')],
+    [INF, float_term('Infinity')],
+    [-INF, float_term('-Infinity')],
+    ['Pivity', string_term('Pivity')],
+    [['foo', 'bar'], term('List', [string_term('foo'), string_term('bar')])],
+    [['foo' => 'bar'], term('Dictionary', ['fields' => ['foo' => string_term('bar')]])],
+]);
 
 it('throws when converting arrays with non-string keys', function () {
     $value = [
@@ -469,15 +469,15 @@ it('converts expressions to Polar terms', function (PolarOperator $operator, $lh
     PolarOperator::Geq,
     PolarOperator::Mul,
     PolarOperator::Sub,
-])->with(function () {
-    yield [false, term('Boolean', false)];
-    yield [24, int_term(24)];
-    yield ['Bear', string_term('Bear')];
-})->with(function () {
-    yield [true, term('Boolean', true)];
-    yield [-24, int_term(-24)];
-    yield ['Polar', string_term('Polar')];
-});
+])->with([
+    [false, term('Boolean', false)],
+    [24, int_term(24)],
+    ['Bear', string_term('Bear')],
+])->with([
+    [true, term('Boolean', true)],
+    [-24, int_term(-24)],
+    ['Polar', string_term('Polar')],
+]);
 
 it('converts tag only patterns to Polar terms', function () {
     $term = $this->host->toPolarTerm(new Pattern('MyTag'));
