@@ -105,7 +105,7 @@ class Host
                 }
             }
 
-            $polarTypes[$type->name] = (object)$fieldTypes;
+            $polarTypes[$type->name] = (object) $fieldTypes;
         }
 
         return $polarTypes;
@@ -345,7 +345,7 @@ class Host
         if ($value instanceof Expression) {
             return self::term('Expression', [
                 'operator' => $value->operator->value,
-                'args' => array_map(
+                'args'     => array_map(
                     $this->toPolarTerm(...),
                     $value->args
                 ),
@@ -363,7 +363,7 @@ class Host
 
             return self::term('Pattern', [
                 'Instance' => [
-                    'tag' => $value->tag,
+                    'tag'    => $value->tag,
                     'fields' => $dict['Dictionary'],
                 ],
             ]);
@@ -384,9 +384,9 @@ class Host
 
         return self::term('ExternalInstance', [
             'instance_id' => $instanceId,
-            'repr' => self::repr($value),
-            'class_repr' => $classRepr ?? null,
-            'class_id' => $classId ?? null,
+            'repr'        => self::repr($value),
+            'class_repr'  => $classRepr ?? null,
+            'class_id'    => $classId ?? null,
         ]);
     }
 
@@ -399,18 +399,18 @@ class Host
         return match ($tag) {
             'String', 'Boolean'  => $data,
             'Number'             => match (array_keys($data)[0]) {
-                'Integer' => $data['Integer'],
-                'Float'   => is_string($data['Float']) ? match ($data['Float']) {
-                    'Infinity'  => INF,
-                    '-Infinity' => -INF,
-                    'NaN'       => NAN,
-                    default     => throw new OsoException("Expected a floating point number, got \"{$data['Float']}\"")
+                'Integer'        => $data['Integer'],
+                'Float'          => is_string($data['Float']) ? match ($data['Float']) {
+                    'Infinity'   => INF,
+                    '-Infinity'  => -INF,
+                    'NaN'        => NAN,
+                    default      => throw new OsoException("Expected a floating point number, got \"{$data['Float']}\"")
                 }
-                    : $data['Float'],
-                default   => throw new OsoException('Expected a Number, got "' . array_keys($data)[0] . '"'),
+                : $data['Float'],
+                default   => throw new OsoException('Expected a Number, got "'.array_keys($data)[0].'"'),
             },
-            'List' => $this->toPhpArray($data),
-            'Dictionary' => $this->toPhpArray((array) $data['fields']),
+            'List'               => $this->toPhpArray($data),
+            'Dictionary'         => $this->toPhpArray((array) $data['fields']),
             'ExternalInstance'   => $this->getInstance($data['instance_id']),
             'Call'               => new Predicate($data['name'], ...$this->toPhpArray($data['args'])),
             'Variable'           => new Variable($data),
@@ -421,16 +421,16 @@ class Host
                 )
                 : throw new UnexpectedExpressionException(),
             'Pattern'            => match (array_keys($data)[0]) {
-                'Instance'   => new Pattern(
+                'Instance'       => new Pattern(
                     $data['Instance']['tag'],
                     $this->toPhp(self::term('Dictionary', [
-                        'fields' => $data['Instance']['fields']['fields']
+                        'fields' => $data['Instance']['fields']['fields'],
                     ]))
                 ),
                 'Dictionary' => new Pattern(
                     fields: $this->toPhp(['value' => $data])
                 ),
-                default      => throw new OsoException('Expected a Pattern, got \"' . array_keys($value)[0] . '"')
+                default      => throw new OsoException('Expected a Pattern, got \"'.array_keys($value)[0].'"')
             },
             default              => throw new OsoException("Unknown tag: '$tag'")
         };
@@ -469,7 +469,7 @@ class Host
         $repr = get_debug_type($value);
 
         if (is_object($value)) {
-            $repr .= '@' . spl_object_id($value);
+            $repr .= '@'.spl_object_id($value);
         }
 
         return $repr;

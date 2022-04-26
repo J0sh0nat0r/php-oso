@@ -4,8 +4,8 @@ namespace J0sh0nat0r\Oso;
 
 use InvalidArgumentException;
 use J0sh0nat0r\Oso\Exceptions\InlineQueryFailedException;
-use J0sh0nat0r\Oso\FFI\PolarLib;
 use J0sh0nat0r\Oso\FFI\Polar as FFIPolar;
+use J0sh0nat0r\Oso\FFI\PolarLib;
 
 /**
  * @template TQuery
