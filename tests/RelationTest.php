@@ -13,11 +13,11 @@ it('serializes "one" relationships correctly', function () {
 
     expect($relation->jsonSerialize())->toBe([
         'Relation' => [
-            'kind' => 'one',
+            'kind'            => 'one',
             'other_class_tag' => 'Foo',
-            'my_field' => 'foo_id',
-            'other_field' => 'id'
-        ]
+            'my_field'        => 'foo_id',
+            'other_field'     => 'id',
+        ],
     ]);
 });
 
@@ -30,10 +30,10 @@ it('serializes "many" relationships correctly', function () {
 
     expect($relation->jsonSerialize())->toBe([
         'Relation' => [
-            'kind' => 'many',
+            'kind'            => 'many',
             'other_class_tag' => 'Bar',
-            'my_field' => 'id',
-            'other_field' => 'foo_id'
-        ]
+            'my_field'        => 'id',
+            'other_field'     => 'foo_id',
+        ],
     ]);
 });
