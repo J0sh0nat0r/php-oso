@@ -8,7 +8,6 @@ use J0sh0nat0r\Oso\DataFiltering\Filter;
 use J0sh0nat0r\Oso\Exceptions\DataFilteringConfigurationException;
 use J0sh0nat0r\Oso\Exceptions\DuplicateClassAliasException;
 use J0sh0nat0r\Oso\Exceptions\InstantiationException;
-use J0sh0nat0r\Oso\Exceptions\InternalErrorException;
 use J0sh0nat0r\Oso\Exceptions\InvalidFieldNameException;
 use J0sh0nat0r\Oso\Exceptions\OsoException;
 use J0sh0nat0r\Oso\Exceptions\UnexpectedExpressionException;
@@ -106,7 +105,7 @@ class Host
                 }
             }
 
-            $polarTypes[$type->name] = (object) $fieldTypes;
+            $polarTypes[$type->name] = (object)$fieldTypes;
         }
 
         return $polarTypes;
@@ -144,7 +143,7 @@ class Host
                 continue;
             }
 
-            $parent = $type->classType;
+            $parent = $type->classType->getParentType();
             $mro = [];
 
             while ($parent !== false) {
@@ -265,18 +264,17 @@ class Host
         return $leftClass->getName() === $rightClass->getName() || $leftClass->isSubclassOf($rightClass);
     }
 
-    public function operator(string $op, array $args): bool
+    public function externalOp(PolarComparisonOperator $op, array $args): bool
     {
-        [$left, $right] = $args;
+        [$left, $right] = $this->toPhpArray($args);
 
         return match ($op) {
-            'Eq'    => is_object($left) && is_object($right) ? $left == $right : $left === $right,
-            'Neq'   => is_object($left) && is_object($right) ? $left != $right : $left !== $right,
-            'Geq'   => $left >= $right,
-            'Gt'    => $left > $right,
-            'Leq'   => $left <= $right,
-            'Lt'    => $left < $right,
-            default => throw new InternalErrorException("Unimplemented operator: $op"),
+            PolarComparisonOperator::Eq  => is_object($left) && is_object($right) ? $left == $right : $left === $right,
+            PolarComparisonOperator::Neq => is_object($left) && is_object($right) ? $left != $right : $left !== $right,
+            PolarComparisonOperator::Geq => $left >= $right,
+            PolarComparisonOperator::Gt  => $left > $right,
+            PolarComparisonOperator::Leq => $left <= $right,
+            PolarComparisonOperator::Lt  => $left < $right,
         };
     }
 
@@ -347,7 +345,7 @@ class Host
         if ($value instanceof Expression) {
             return self::term('Expression', [
                 'operator' => $value->operator->value,
-                'args'     => array_map(
+                'args' => array_map(
                     $this->toPolarTerm(...),
                     $value->args
                 ),
@@ -355,20 +353,18 @@ class Host
         }
 
         if ($value instanceof Pattern) {
-            $dict = $this->toPolarTerm($value->fields)['value'];
+            $dict = empty($value->fields)
+                ? ['Dictionary' => ['fields' => new stdClass()]]
+                : $this->toPolarTerm($value->fields)['value'];
 
             if (empty($value->tag)) {
-                return self::term('Pattern', ['fields' => $dict]);
+                return self::term('Pattern', $dict);
             }
-
-            // $dict['Dictionary'] will be empty when we attempt to serialize an empty array
-            $dict['Dictionary'] ??= ['fields' => new stdClass()];
 
             return self::term('Pattern', [
                 'Instance' => [
                     'tag' => $value->tag,
-                    // Empty arrays are represented as empty lists
-                    'fields' => $dict['Dictionary'] ?? $dict['List'],
+                    'fields' => $dict['Dictionary'],
                 ],
             ]);
         }
@@ -388,9 +384,9 @@ class Host
 
         return self::term('ExternalInstance', [
             'instance_id' => $instanceId,
-            'repr'        => self::repr($value),
-            'class_repr'  => $classRepr ?? null,
-            'class_id'    => $classId ?? null,
+            'repr' => self::repr($value),
+            'class_repr' => $classRepr ?? null,
+            'class_id' => $classId ?? null,
         ]);
     }
 
@@ -401,39 +397,42 @@ class Host
         $data = $value[$tag];
 
         return match ($tag) {
-            'String', 'Boolean' => $data,
-            'Number'            => match (array_keys($data)[0]) {
-                'Integer'       => $data['Integer'],
-                'Float'         => is_string($data['Float']) ? match ($data['Float']) {
+            'String', 'Boolean'  => $data,
+            'Number'             => match (array_keys($data)[0]) {
+                'Integer' => $data['Integer'],
+                'Float'   => is_string($data['Float']) ? match ($data['Float']) {
                     'Infinity'  => INF,
                     '-Infinity' => -INF,
                     'NaN'       => NAN,
                     default     => throw new OsoException("Expected a floating point number, got \"{$data['Float']}\"")
                 }
-                : $data['Float'],
-                default => throw new OsoException('Expected a Number, got "'.array_keys($data)[0].'"'),
+                    : $data['Float'],
+                default   => throw new OsoException('Expected a Number, got "' . array_keys($data)[0] . '"'),
             },
-            'List', 'Dictionary' => $this->toPhpArray($data),
-            'ExternalInstance' => $this->getInstance($data['instance_id']),
-            'Call'             => new Predicate($data['name'], $this->toPhpArray($data['args'])),
-            'Variable'         => new Variable($data),
-            'Expression'       => $this->acceptExpression
+            'List' => $this->toPhpArray($data),
+            'Dictionary' => $this->toPhpArray((array) $data['fields']),
+            'ExternalInstance'   => $this->getInstance($data['instance_id']),
+            'Call'               => new Predicate($data['name'], ...$this->toPhpArray($data['args'])),
+            'Variable'           => new Variable($data),
+            'Expression'         => $this->acceptExpression
                 ? new Expression(
                     PolarOperator::from($data['operator']),
                     ...$this->toPhpArray($data['args'])
                 )
                 : throw new UnexpectedExpressionException(),
-            'Pattern'      => match (array_keys($data)[0]) {
-                'Instance' => new Pattern(
+            'Pattern'            => match (array_keys($data)[0]) {
+                'Instance'   => new Pattern(
                     $data['Instance']['tag'],
-                    $this->toPhpArray($data['Instance']['fields']['fields'])
+                    $this->toPhp(self::term('Dictionary', [
+                        'fields' => $data['Instance']['fields']['fields']
+                    ]))
                 ),
                 'Dictionary' => new Pattern(
-                    fields: $this->toPhpArray($data['Instance']['fields']['fields'])
+                    fields: $this->toPhp(['value' => $data])
                 ),
-                default => throw new OsoException('Expected a Pattern, got \"'.array_keys($value)[0].'"')
+                default      => throw new OsoException('Expected a Pattern, got \"' . array_keys($value)[0] . '"')
             },
-            default => throw new OsoException("Unknown tag: '$tag'")
+            default              => throw new OsoException("Unknown tag: '$tag'")
         };
     }
 
@@ -470,7 +469,7 @@ class Host
         $repr = get_debug_type($value);
 
         if (is_object($value)) {
-            $repr .= '@'.spl_object_id($value);
+            $repr .= '@' . spl_object_id($value);
         }
 
         return $repr;

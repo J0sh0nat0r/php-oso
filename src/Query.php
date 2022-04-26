@@ -131,9 +131,9 @@ class Query implements IteratorAggregate
 
     protected function handleExternalOp(array $data): void
     {
-        $answer = $this->host->operator(
-            $data['operator'],
-            $this->host->toPhpArray($data['args'])
+        $answer = $this->host->externalOp(
+            PolarComparisonOperator::from($data['operator']),
+            $data['args']
         );
 
         $this->ffiQuery->questionResult($data['call_id'], $answer);

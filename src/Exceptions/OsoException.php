@@ -2,7 +2,7 @@
 
 namespace J0sh0nat0r\Oso\Exceptions;
 
-use J0sh0nat0r\Oso\FFI\Ffi;
+use J0sh0nat0r\Oso\FFI\PolarLib;
 use RuntimeException;
 
 class OsoException extends RuntimeException
@@ -20,7 +20,7 @@ class OsoException extends RuntimeException
     public static function fromJson(string $json): self
     {
         try {
-            $data = Ffi::deserialize($json);
+            $data = PolarLib::deserialize($json);
         } catch (InternalErrorException) {
             return new self($json);
         }

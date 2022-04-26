@@ -8,7 +8,7 @@ abstract class AutoPointer
 {
     protected CData $ptr;
 
-    public function __construct(protected Ffi $polarLib, ?CData $ptr)
+    public function __construct(protected PolarLib $polarLib, ?CData $ptr)
     {
         $this->ptr = $ptr ?? \FFI::cast('void*', 0);
     }

@@ -11,7 +11,7 @@ class Query extends AutoPointer
 
     public function callResult(int $callId, ?array $value): void
     {
-        $this->polarLib->polarCallResult($this, $callId, Ffi::serialize($value))->check();
+        $this->polarLib->polarCallResult($this, $callId, PolarLib::serialize($value))->check();
     }
 
     public function applicationError(string $message): void
@@ -25,7 +25,7 @@ class Query extends AutoPointer
 
         $this->processMessages();
 
-        return Ffi::deserialize($event);
+        return PolarLib::deserialize($event);
     }
 
     public function debugCommand(string $value): void
@@ -47,7 +47,7 @@ class Query extends AutoPointer
 
     public function bind(string $name, array $value): void
     {
-        $this->polarLib->polarBind($this, $name, Ffi::serialize($value))->check();
+        $this->polarLib->polarBind($this, $name, PolarLib::serialize($value))->check();
     }
 
     protected function processMessages(): void

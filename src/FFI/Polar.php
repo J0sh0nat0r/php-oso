@@ -22,15 +22,15 @@ class Polar extends AutoPointer
     {
         $plan = $this->polarLib->polarBuildDataFilter(
             $this,
-            Ffi::serialize($types),
-            Ffi::serialize($partialResults),
+            PolarLib::serialize($types),
+            PolarLib::serialize($partialResults),
             $variable,
             $classTag
         );
 
         $this->processMessages();
 
-        return Ffi::deserialize($plan->check()->value());
+        return PolarLib::deserialize($plan->check()->value());
     }
 
     /**
@@ -38,7 +38,7 @@ class Polar extends AutoPointer
      */
     public function load(array $sources): void
     {
-        $this->polarLib->polarLoad($this, Ffi::serialize($sources))->check();
+        $this->polarLib->polarLoad($this, PolarLib::serialize($sources))->check();
         $this->processMessages();
     }
 
@@ -58,7 +58,7 @@ class Polar extends AutoPointer
 
     public function newQueryFromTerm(array $queryTerm): Query
     {
-        $query = $this->polarLib->polarNewQueryFromTerm($this, Ffi::serialize($queryTerm), 0)->check();
+        $query = $this->polarLib->polarNewQueryFromTerm($this, PolarLib::serialize($queryTerm), 0)->check();
         $this->processMessages();
 
         return $query;
@@ -74,12 +74,12 @@ class Polar extends AutoPointer
 
     public function registerConstant(string $name, array $value): void
     {
-        $this->polarLib->polarRegisterConstant($this, $name, Ffi::serialize($value))->check();
+        $this->polarLib->polarRegisterConstant($this, $name, PolarLib::serialize($value))->check();
     }
 
     public function registerMro(string $name, array $mro): void
     {
-        $this->polarLib->polarRegisterMro($this, $name, Ffi::serialize($mro))->check();
+        $this->polarLib->polarRegisterMro($this, $name, PolarLib::serialize($mro))->check();
     }
 
     public function nextMessage(): ?string
@@ -121,7 +121,7 @@ class Polar extends AutoPointer
         }
 
         try {
-            ['kind' => $kind, 'msg' => $msg] = Ffi::deserialize($msgStr);
+            ['kind' => $kind, 'msg' => $msg] = PolarLib::deserialize($msgStr);
 
             $stream = match ($kind) {
                 'Print'   => STDOUT,

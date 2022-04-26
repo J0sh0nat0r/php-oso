@@ -27,6 +27,7 @@
   "require-dev": {
     "jetbrains/phpstorm-attributes": "^1.0",
     "pestphp/pest": "^1.21",
+    "pestphp/pest-plugin-mock": "^1.0",
     "phpstan/phpstan": "^1.5"
   },
   "config": {

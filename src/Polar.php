@@ -4,7 +4,7 @@ namespace J0sh0nat0r\Oso;
 
 use InvalidArgumentException;
 use J0sh0nat0r\Oso\Exceptions\InlineQueryFailedException;
-use J0sh0nat0r\Oso\FFI\Ffi;
+use J0sh0nat0r\Oso\FFI\PolarLib;
 use J0sh0nat0r\Oso\FFI\Polar as FFIPolar;
 
 /**
@@ -22,7 +22,7 @@ class Polar
 
     public function __construct()
     {
-        $this->ffiPolar = Ffi::get()->polarNew();
+        $this->ffiPolar = PolarLib::getInstance()->polarNew();
         $this->host = new Host($this->ffiPolar);
 
         // Register global constants.

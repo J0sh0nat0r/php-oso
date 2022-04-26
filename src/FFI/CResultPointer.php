@@ -15,7 +15,7 @@ class CResultPointer extends CResult
     /**
      * @param class-string<T> $resultType
      */
-    public function __construct(Ffi $polarLib, CData $ptr, string $resultType)
+    public function __construct(PolarLib $polarLib, CData $ptr, string $resultType)
     {
         parent::__construct($polarLib, $ptr);
 

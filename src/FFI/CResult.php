@@ -8,7 +8,7 @@ class CResult extends AutoPointer
 {
     protected RustString $error;
 
-    public function __construct(Ffi $polarLib, CData $ptr)
+    public function __construct(PolarLib $polarLib, CData $ptr)
     {
         parent::__construct($polarLib, $ptr);
 

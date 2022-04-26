@@ -3,14 +3,16 @@
 namespace J0sh0nat0r\Oso\FFI;
 
 use Exception;
+use FFI;
 use J0sh0nat0r\Oso\Exceptions\InternalErrorException;
 use JsonException;
+use RuntimeException;
 
-class Ffi
+class PolarLib
 {
-    protected static Ffi $instance;
+    protected static PolarLib $instance;
 
-    protected \FFI|PolarExtern $ffi;
+    protected FFI|PolarExtern $ffi;
 
     protected function __construct()
     {
@@ -18,10 +20,10 @@ class Ffi
             'Windows' => 'polar.dll',
             'Darwin'  => 'libpolar.dylib',
             'Linux'   => 'libpolar.so',
-            default   => throw new Exception('Unsupported OS'),
+            default   => throw new RuntimeException('Unsupported OS: ' . PHP_OS_FAMILY),
         };
 
-        $this->ffi = \FFI::cdef(
+        $this->ffi = FFI::cdef(
             file_get_contents(__DIR__.'/../../lib/polar.h'),
             __DIR__."/../../lib/$fileName"
         );
@@ -36,9 +38,9 @@ class Ffi
         }
     }
 
-    public static function get(): self
+    public static function getInstance(): self
     {
-        return self::$instance ?? (self::$instance = new self());
+        return self::$instance ??= new self();
     }
 
     public static function serialize($value): string
@@ -79,7 +81,7 @@ class Ffi
     {
         $ptr = $this->ffi->polar_next_inline_query($polar->get(), $trace);
 
-        return $ptr === null || \FFI::isNull($ptr) ? null : new Query($this, $ptr);
+        return $ptr === null || FFI::isNull($ptr) ? null : new Query($this, $ptr);
     }
 
     /**
@@ -201,7 +203,7 @@ class Ffi
 
     public function resultFree(CResult $result): int
     {
-        return $this->ffi->result_free(\FFI::cast($this->ffi->type('polar_CResult_c_void*'), $result->get()));
+        return $this->ffi->result_free(FFI::cast($this->ffi->type('polar_CResult_c_void*'), $result->get()));
     }
 
     /**

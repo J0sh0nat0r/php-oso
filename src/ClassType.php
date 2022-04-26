@@ -35,7 +35,7 @@ class ClassType
             $reflectionClass = new ReflectionClass($name);
         }
 
-        return new self($name, $reflectionClass ?? null);
+        return new self(self::normalizeType($name), $reflectionClass ?? null);
     }
 
     /**
@@ -43,7 +43,7 @@ class ClassType
      */
     public static function fromInstance(mixed $instance): self
     {
-        $name = gettype($instance);
+        $name = self::getNormalizedType($instance);
 
         if ($name === 'object') {
             $name = $instance::class;
@@ -65,7 +65,7 @@ class ClassType
 
     public function isInstance(mixed $instance): bool
     {
-        $instanceType = gettype($instance);
+        $instanceType = self::getNormalizedType($instance);
 
         if ($instanceType === $this->name && $this->isPrimitive()) {
             return true;
@@ -92,5 +92,20 @@ class ClassType
         }
 
         return new self($parent->getName(), $parent);
+    }
+
+    protected static function getNormalizedType(mixed $value): string {
+        return self::normalizeType(gettype($value));
+    }
+
+    /*
+     * Some primitive types should be considered to be equivalent, so we must normalize the names
+     */
+    protected static function normalizeType(string $type): string {
+        return match($type) {
+            'double', 'float', => 'float',
+            'resource', 'resource (closed)' => 'resource',
+            default => $type
+        };
     }
 }

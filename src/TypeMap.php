@@ -14,11 +14,11 @@ use Traversable;
 class TypeMap implements ArrayAccess, IteratorAggregate
 {
     /**
-     * @var array<string, UserType>
+     * @var array<string, array<ClassType|UserType>>
      */
     protected array $classTypes;
     /**
-     * @var array<string, UserType>>
+     * @var array<string, UserType>
      */
     protected array $namedTypes;
 
@@ -33,13 +33,13 @@ class TypeMap implements ArrayAccess, IteratorAggregate
         }
 
         /** @phpstan-ignore-next-line */
-        throw new InvalidArgumentException('Illegal offset type');
+        throw new InvalidArgumentException('Illegal offset type: '.get_debug_type($offset));
     }
 
     public function offsetGet(mixed $offset): UserType
     {
         if ($offset instanceof ClassType) {
-            return $this->classTypes[$offset->getName()];
+            return $this->classTypes[$offset->getName()][1];
         }
 
         if (is_string($offset)) {
@@ -47,17 +47,17 @@ class TypeMap implements ArrayAccess, IteratorAggregate
         }
 
         /** @phpstan-ignore-next-line */
-        throw new InvalidArgumentException('Illegal offset type');
+        throw new InvalidArgumentException('Illegal offset type: '.get_debug_type($offset));
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
         if (!($value instanceof UserType)) {
-            throw new InvalidArgumentException('Illegal value type');
+            throw new InvalidArgumentException('Illegal value type: '.get_debug_type($value));
         }
 
         if ($offset instanceof ClassType) {
-            $this->classTypes[$offset->getName()] = $value;
+            $this->classTypes[$offset->getName()] = [$offset, $value];
 
             return;
         }
@@ -86,15 +86,15 @@ class TypeMap implements ArrayAccess, IteratorAggregate
         }
 
         /** @phpstan-ignore-next-line */
-        throw new InvalidArgumentException('Illegal offset type');
+        throw new InvalidArgumentException('Illegal offset type: '.get_debug_type($offset));
     }
 
     public function getIterator(): Traversable
     {
         yield from $this->namedTypes;
 
-        foreach ($this->classTypes as $type) {
-            yield $type->classType => $type;
+        foreach ($this->classTypes as [$classType, $type]) {
+            yield $classType => $type;
         }
     }
 }
