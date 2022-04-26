@@ -2,6 +2,7 @@
 
 namespace J0sh0nat0r\Oso\FFI;
 
+use J0sh0nat0r\Oso\Exceptions\InternalErrorException;
 use J0sh0nat0r\Oso\Exceptions\OsoException;
 
 class CResultVoid extends CResult
@@ -13,7 +14,7 @@ class CResultVoid extends CResult
         }
 
         if ($this->ptr->result !== null) {
-            throw new OsoException('Internal error: both result and error pointers are non-null');
+            throw new InternalErrorException('Both result and error pointers are non-null');
         }
 
         throw OsoException::fromJson($this->error->value());
