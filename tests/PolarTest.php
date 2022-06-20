@@ -6,10 +6,8 @@ use J0sh0nat0r\Oso\Exceptions\InlineQueryFailedException;
 use J0sh0nat0r\Oso\Polar;
 use J0sh0nat0r\Oso\Tests\PolarTestSupport\A;
 use J0sh0nat0r\Oso\Tests\PolarTestSupport\BC;
-use J0sh0nat0r\Oso\Tests\PolarTestSupport\D;
 use J0sh0nat0r\Oso\Tests\PolarTestSupport\E;
 use J0sh0nat0r\Oso\Variable;
-use PHPUnit\Framework\Constraint\IsEmpty;
 
 beforeEach(function () {
     // Suppress messages (loading policies without allow triggers warnings)
@@ -58,7 +56,7 @@ test('builtin specializers', function (string $literal, string $type, bool $expe
     $this->polar->registerClass(BC::class, 'C');
     $this->polar->registerClass(E::class, 'E');
 
-    $this->polar->loadFiles([__DIR__ . '/PolarTestSupport/test.polar']);
+    $this->polar->loadFiles([__DIR__.'/PolarTestSupport/test.polar']);
 
     $query = $this->polar->query("builtinSpecializers($literal, \"$type\")");
 

@@ -12,7 +12,6 @@ use J0sh0nat0r\Oso\Exceptions\DuplicateInstanceRegistrationException;
 use J0sh0nat0r\Oso\Exceptions\InternalErrorException;
 use J0sh0nat0r\Oso\Exceptions\InvalidAttributeException;
 use J0sh0nat0r\Oso\Exceptions\InvalidCallException;
-use J0sh0nat0r\Oso\Exceptions\InvalidFieldNameException;
 use J0sh0nat0r\Oso\Exceptions\InvalidIteratorException;
 use J0sh0nat0r\Oso\FFI\Query as FFIQuery;
 use ReflectionException;
@@ -58,7 +57,6 @@ class Query implements IteratorAggregate
 
                 $result = $instance->{$attrName};
             }
-
         } catch (InvalidAttributeException|InvalidCallException $e) {
             $result = null;
 
@@ -85,7 +83,7 @@ class Query implements IteratorAggregate
                     yield $this->host->toPhpArray($data['bindings']);
                     break;
                 default:
-                {
+
                     $handler = "handle$kind";
 
                     if (!method_exists($this, $handler)) {
@@ -94,7 +92,7 @@ class Query implements IteratorAggregate
 
                     $this->$handler($data);
                     break;
-                }
+
             }
         }
     }

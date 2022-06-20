@@ -8,7 +8,8 @@ class A
     {
     }
 
-    public function foo(): int {
+    public function foo(): int
+    {
         return -1;
     }
 }
