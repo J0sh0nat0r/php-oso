@@ -8,6 +8,6 @@ class InvalidAttributeException extends PolarException
 {
     public function __construct(mixed $instance, string $field)
     {
-        parent::__construct("$field not found on " . Host::repr($instance));
+        parent::__construct("$field not found on ".Host::repr($instance));
     }
 }
