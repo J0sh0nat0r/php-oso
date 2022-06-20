@@ -6,7 +6,6 @@ class BC
 {
     public function __construct(public string $y)
     {
-
     }
 
     public function foo(): int
