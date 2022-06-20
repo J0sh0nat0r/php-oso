@@ -2,7 +2,6 @@
 
 namespace J0sh0nat0r\Oso;
 
-use InvalidArgumentException;
 use J0sh0nat0r\Oso\Exceptions\InlineQueryFailedException;
 use J0sh0nat0r\Oso\Exceptions\PolarFileExtensionException;
 use J0sh0nat0r\Oso\Exceptions\PolarFileNotFoundException;
