@@ -9,10 +9,14 @@ This library integrates the authorization framework [Oso](https://github.com/oso
 lacks an official integration.
 
 ## Installation:
-`composer require j0sh0nat0r/oso-php` (NOTE: The package is not yet available so installation from git is required)
+`composer require j0sh0nat0r/oso` (NOTE: The package is not yet available so installation from git is required)
 
 ## Quick example:
 ```PHP
+use J0sh0nat0r\Oso\Oso;
+use J0sh0nat0r\Oso\QueryOpts;
+use J0sh0nat0r\Oso\Variable;
+
 class Repository {
     public function __construct(public string $name, public bool $isPublic) { }
 }
@@ -37,7 +41,7 @@ $usersDb = [
     'graham' => new User([new Role('contributor', $reposDb['oso'])]),
 ];
 
-$oso = new \J0sh0nat0r\Oso\Oso();
+$oso = new Oso();
 
 $oso->registerClass(User::class);
 $oso->registerClass(Repository::class);
@@ -75,13 +79,13 @@ POLAR
 echo 'Larry can push to gmail: ' . var_export($oso->isAllowed($usersDb['larry'], 'push', $reposDb['gmail']), true) . PHP_EOL;
 
 // Using queries as iterators
-// Note that in practice `authorizedActions` would be used here
+// This code loosely mirrors the implementation of `authorizedActions`
 foreach ($reposDb as $repo) {
     echo "$repo->name:", PHP_EOL;
 
     foreach ($usersDb as $name => $user) {
         // Here we ask Oso to return the allowed action to us using a variable
-        $query = $oso->queryRule('allow', [], false, $user, new \J0sh0nat0r\Oso\Variable('action'), $repo);
+        $query = $oso->queryRule('allow', QueryOpts::default(), $user, new Variable('action'), $repo);
 
         $allowedActions = array_column(iterator_to_array($query), 'action');
 
