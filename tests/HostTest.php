@@ -162,7 +162,7 @@ it('makes an instance', function () {
 
 it('throws when attempting to make instances of unregistered types', function () {
     expect(fn () => $this->host->makeInstance('FooBar', [], 0))
-        ->toThrow(UnregisteredClassException::class, 'Unregistered class: FooBar.');
+        ->toThrow(UnregisteredClassException::class, 'Unregistered class: FooBar');
 });
 
 it('throws when attempting to make instances of primitive types', function () {
@@ -269,7 +269,7 @@ test('isaWithPath throws on references to unregistered types', function () {
     ]);
 
     expect(fn () => $this->host->isaWithPath('User', [string_term('profile')], 'UserProfile'))
-        ->toThrow(UnregisteredClassException::class, 'Unregistered class: UserProfile.');
+        ->toThrow(UnregisteredClassException::class, 'Unregistered class: UserProfile');
 });
 
 it('reports subclasses correctly', function () {
@@ -404,11 +404,11 @@ it('fails to serialize types referencing unregistered classes', function () {
     ]);
 
     expect(fn () => $this->host->serializeTypes())
-        ->toThrow(UnregisteredClassException::class, 'Unregistered class: string.');
+        ->toThrow(UnregisteredClassException::class, 'Unregistered class: string');
 });
 
 it('converts primitive values to Polar terms', function ($value, $expected) {
-    $term = $this->host->toPolarTerm($value);
+    $term = $this->host->toPolar($value);
 
     expect($term)->toEqual($expected);
 })->with([
@@ -429,18 +429,18 @@ it('throws when converting arrays with non-string keys', function () {
         2     => 'baz',
     ];
 
-    expect(fn () => $this->host->toPolarTerm($value))
+    expect(fn () => $this->host->toPolar($value))
         ->toThrow(\InvalidArgumentException::class, 'Cannot convert array with non-string keys to Polar');
 });
 
 it('converts variables to Polar terms', function () {
-    $term = $this->host->toPolarTerm(new Variable('test'));
+    $term = $this->host->toPolar(new Variable('test'));
 
     expect($term)->toEqual(term('Variable', 'test'));
 });
 
 it('converts predicates to Polar terms', function () {
-    $term = $this->host->toPolarTerm(new Predicate('printf', 'Hello, %s!', 'World'));
+    $term = $this->host->toPolar(new Predicate('printf', 'Hello, %s!', 'World'));
 
     expect($term)->toEqual(term('Call', [
         'name' => 'printf',
@@ -452,7 +452,7 @@ it('converts predicates to Polar terms', function () {
 });
 
 it('converts expressions to Polar terms', function (PolarOperator $operator, $lhs, $lhsTerm, $rhs, $rhsTerm) {
-    $term = $this->host->toPolarTerm(new Expression(
+    $term = $this->host->toPolar(new Expression(
         $operator,
         $lhs,
         $rhs
@@ -480,7 +480,7 @@ it('converts expressions to Polar terms', function (PolarOperator $operator, $lh
 ]);
 
 it('converts tag only patterns to Polar terms', function () {
-    $term = $this->host->toPolarTerm(new Pattern('MyTag'));
+    $term = $this->host->toPolar(new Pattern('MyTag'));
 
     expect($term)->toEqual(term('Pattern', [
         'Instance' => [
@@ -493,7 +493,7 @@ it('converts tag only patterns to Polar terms', function () {
 });
 
 it('converts field only patterns to Polar terms', function () {
-    $term = $this->host->toPolarTerm(new Pattern(fields: [
+    $term = $this->host->toPolar(new Pattern(fields: [
         'foo' => 'bar',
     ]));
 
@@ -507,7 +507,7 @@ it('converts field only patterns to Polar terms', function () {
 });
 
 it('converts full patterns to Polar terms', function () {
-    $term = $this->host->toPolarTerm(new Pattern('TheTag', [
+    $term = $this->host->toPolar(new Pattern('TheTag', [
         'bar' => 181,
     ]));
 
@@ -526,7 +526,7 @@ it('converts full patterns to Polar terms', function () {
 it('converts registered classes to Polar terms', function () {
     $this->host->cacheClass(ClassType::fromName(User::class), null, []);
 
-    $term = $this->host->toPolarTerm(ClassType::fromName(User::class));
+    $term = $this->host->toPolar(ClassType::fromName(User::class));
 
     expect($term['value']['ExternalInstance'])
         ->toHaveKey('instance_id')
@@ -536,7 +536,7 @@ it('converts registered classes to Polar terms', function () {
 });
 
 it('converts new instances with unregistered types to Polar terms', function () {
-    $term = $this->host->toPolarTerm(new User('Bob'));
+    $term = $this->host->toPolar(new User('Bob'));
 
     expect($term['value']['ExternalInstance'])
         ->toHaveKey('instance_id', 1)
@@ -548,7 +548,7 @@ it('converts new instances with unregistered types to Polar terms', function () 
 it('converts new instances with registered types to Polar terms', function () {
     $this->host->cacheClass(ClassType::fromName(User::class), 'MyUser', []);
 
-    $term = $this->host->toPolarTerm(new User('Alice'));
+    $term = $this->host->toPolar(new User('Alice'));
 
     expect($term['value']['ExternalInstance'])
         ->toHaveKey('instance_id', 2)
@@ -560,7 +560,7 @@ it('converts new instances with registered types to Polar terms', function () {
 it('converts values to Polar terms and back again', function ($value) {
     $this->host->setAcceptExpression(true);
 
-    $term = $this->host->toPolarTerm($value);
+    $term = $this->host->toPolar($value);
 
     if (is_float($value) && is_nan($value)) {
         expect($this->host->toPhp($term))->toBeNan();

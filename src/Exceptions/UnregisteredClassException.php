@@ -6,6 +6,6 @@ class UnregisteredClassException extends PolarException
 {
     public function __construct(string $name)
     {
-        parent::__construct("Unregistered class: $name.");
+        parent::__construct("Unregistered class: $name");
     }
 }

@@ -124,8 +124,7 @@ class Oso extends Polar
 
         $results = $this->queryRule(
             'allow',
-            $bindings,
-            true,
+            new QueryOpts(true, $bindings),
             $actor,
             $action,
             $resource,
@@ -136,7 +135,7 @@ class Oso extends Polar
         foreach ($results as $result) {
             $queryResults[] = [
                 'bindings' => array_map(
-                    $this->host->toPolarTerm(...),
+                    $this->host->toPolar(...),
                     $result
                 ),
             ];

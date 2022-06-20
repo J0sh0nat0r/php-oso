@@ -4,7 +4,12 @@ namespace J0sh0nat0r\Oso\Tests;
 
 use J0sh0nat0r\Oso\Exceptions\InlineQueryFailedException;
 use J0sh0nat0r\Oso\Polar;
+use J0sh0nat0r\Oso\Tests\PolarTestSupport\A;
+use J0sh0nat0r\Oso\Tests\PolarTestSupport\BC;
+use J0sh0nat0r\Oso\Tests\PolarTestSupport\D;
+use J0sh0nat0r\Oso\Tests\PolarTestSupport\E;
 use J0sh0nat0r\Oso\Variable;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 beforeEach(function () {
     // Suppress messages (loading policies without allow triggers warnings)
@@ -43,7 +48,35 @@ test('basic query predicate', function () {
 test('query predicate with object', function () {
     $this->polar->loadStr('f(a, b) if a = b;');
 
-    $query = $this->polar->queryRule('f', [], false, 1, new Variable('result'));
+    $query = $this->polar->queryRule('f', null, 1, new Variable('result'));
 
     expect($query)->toContain(['result' => 1])->toHaveCount(0);
 });
+
+test('builtin specializers', function (string $literal, string $type, bool $expected) {
+    $this->polar->registerClass(A::class, 'A');
+    $this->polar->registerClass(BC::class, 'C');
+    $this->polar->registerClass(E::class, 'E');
+
+    $this->polar->loadFiles([__DIR__ . '/PolarTestSupport/test.polar']);
+
+    $query = $this->polar->query("builtinSpecializers($literal, \"$type\")");
+
+    expect($query->getIterator()->valid())->toBe($expected);
+})->with([
+    ['true', 'Boolean', true],
+    ['false', 'Boolean', false],
+    ['2', 'Integer', true],
+    ['1', 'Integer', true],
+    ['0', 'Integer', false],
+    ['-1', 'Integer', false],
+    ['1.0', 'Float', true],
+    ['0.0', 'Float', false],
+    ['-1.0', 'Float', false],
+    ['["foo", "bar", "baz"]', 'List', true],
+    ['["bar", "foo", "baz"]', 'List', false],
+    ['{foo: "foo"}', 'Dictionary', true],
+    ['{foo: "bar"}', 'Dictionary', false],
+    ['1', 'IntegerWithFields', false],
+    ['2', 'IntegerWithGarbageFields', false],
+]);

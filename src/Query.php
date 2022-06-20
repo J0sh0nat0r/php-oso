@@ -3,13 +3,16 @@
 namespace J0sh0nat0r\Oso;
 
 use ArrayIterator;
+use BadMethodCallException;
 use Generator;
 use Iterator;
 use IteratorAggregate;
 use IteratorIterator;
 use J0sh0nat0r\Oso\Exceptions\DuplicateInstanceRegistrationException;
 use J0sh0nat0r\Oso\Exceptions\InternalErrorException;
+use J0sh0nat0r\Oso\Exceptions\InvalidAttributeException;
 use J0sh0nat0r\Oso\Exceptions\InvalidCallException;
+use J0sh0nat0r\Oso\Exceptions\InvalidFieldNameException;
 use J0sh0nat0r\Oso\Exceptions\InvalidIteratorException;
 use J0sh0nat0r\Oso\FFI\Query as FFIQuery;
 use ReflectionException;
@@ -32,22 +35,37 @@ class Query implements IteratorAggregate
     {
         $instance = $this->host->toPhp($polarInstance);
 
-        $class = $instance instanceof ClassType ? $instance : ClassType::fromInstance($instance);
+        try {
+            if ($args !== null) {
+                try {
+                    $result = $instance->{$attrName}(...array_map(
+                        $this->host->toPhp(...),
+                        $args
+                    ));
+                } catch (BadMethodCallException) {
+                    throw new InvalidCallException($instance, $attrName);
+                }
+            } else {
+                if (
+                    !is_object($instance)
+                    || (
+                        !property_exists($instance, $attrName)
+                        && !method_exists($instance, '__get')
+                    )
+                ) {
+                    throw new InvalidAttributeException($instance, $attrName);
+                }
 
-        if ($class->isPrimitive()) {
-            throw new InvalidCallException($instance, $attrName);
+                $result = $instance->{$attrName};
+            }
+
+        } catch (InvalidAttributeException|InvalidCallException $e) {
+            $result = null;
+
+            $this->ffiQuery->applicationError($e->getMessage());
         }
 
-        if ($args !== null) {
-            $result = $instance->{$attrName}(...array_map(
-                $this->host->toPhp(...),
-                $args
-            ));
-        } else {
-            $result = $instance->{$attrName};
-        }
-
-        $term = $this->host->toPolarTerm($result);
+        $term = $this->host->toPolar($result);
 
         $this->ffiQuery->callResult($callId, $term);
     }
@@ -67,7 +85,7 @@ class Query implements IteratorAggregate
                     yield $this->host->toPhpArray($data['bindings']);
                     break;
                 default:
-
+                {
                     $handler = "handle$kind";
 
                     if (!method_exists($this, $handler)) {
@@ -76,14 +94,14 @@ class Query implements IteratorAggregate
 
                     $this->$handler($data);
                     break;
-
+                }
             }
         }
     }
 
     protected function bind(string $name, $value): void
     {
-        $this->ffiQuery->bind($name, $this->host->toPolarTerm($value));
+        $this->ffiQuery->bind($name, $this->host->toPolar($value));
     }
 
     protected function handleDebug(): void
@@ -188,7 +206,7 @@ class Query implements IteratorAggregate
             return;
         }
 
-        $value = $this->host->toPolarTerm($iterator->current());
+        $value = $this->host->toPolar($iterator->current());
 
         $iterator->next();
 

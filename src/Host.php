@@ -279,7 +279,7 @@ class Host
     }
 
     #[ArrayShape(['value' => 'array'])]
-    public function toPolarTerm($value): array
+    public function toPolar($value): array
     {
         if (is_bool($value)) {
             return self::term('Boolean', $value);
@@ -308,7 +308,7 @@ class Host
         if (is_array($value)) {
             if (array_is_list($value)) {
                 return self::term('List', array_map(
-                    $this->toPolarTerm(...),
+                    $this->toPolar(...),
                     $value
                 ));
             }
@@ -322,7 +322,7 @@ class Host
                     );
                 }
 
-                $fields[$k] = $this->toPolarTerm($v);
+                $fields[$k] = $this->toPolar($v);
             }
 
             return self::term('Dictionary', ['fields' => $fields]);
@@ -332,7 +332,7 @@ class Host
             return self::term('Call', [
                 'name' => $value->name,
                 'args' => array_map(
-                    $this->toPolarTerm(...),
+                    $this->toPolar(...),
                     $value->args
                 ),
             ]);
@@ -346,7 +346,7 @@ class Host
             return self::term('Expression', [
                 'operator' => $value->operator->value,
                 'args'     => array_map(
-                    $this->toPolarTerm(...),
+                    $this->toPolar(...),
                     $value->args
                 ),
             ]);
@@ -355,7 +355,7 @@ class Host
         if ($value instanceof Pattern) {
             $dict = empty($value->fields)
                 ? ['Dictionary' => ['fields' => new stdClass()]]
-                : $this->toPolarTerm($value->fields)['value'];
+                : $this->toPolar($value->fields)['value'];
 
             if (empty($value->tag)) {
                 return self::term('Pattern', $dict);
@@ -464,15 +464,9 @@ class Host
         return $class->classType;
     }
 
-    public static function repr(mixed $value): ?string
+    public static function repr(mixed $value): string
     {
-        $repr = get_debug_type($value);
-
-        if (is_object($value)) {
-            $repr .= '@'.spl_object_id($value);
-        }
-
-        return $repr;
+        return is_object($value) ? $value::class : get_debug_type($value);
     }
 
     #[ArrayShape(['value' => 'array'])]

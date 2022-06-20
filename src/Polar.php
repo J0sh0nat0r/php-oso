@@ -4,6 +4,8 @@ namespace J0sh0nat0r\Oso;
 
 use InvalidArgumentException;
 use J0sh0nat0r\Oso\Exceptions\InlineQueryFailedException;
+use J0sh0nat0r\Oso\Exceptions\PolarFileExtensionException;
+use J0sh0nat0r\Oso\Exceptions\PolarFileNotFoundException;
 use J0sh0nat0r\Oso\FFI\Polar as FFIPolar;
 use J0sh0nat0r\Oso\FFI\PolarLib;
 
@@ -54,13 +56,13 @@ class Polar
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
             if ($ext !== 'polar') {
-                throw new InvalidArgumentException("PolarFileExtensionError($filename)");
+                throw new PolarFileExtensionException($filename);
             }
 
             $contents = file_get_contents($filename);
 
             if ($contents === false) {
-                throw new InvalidArgumentException("PolarFileNotFoundError($filename)");
+                throw new PolarFileNotFoundException($filename);
             }
 
             $sources[] = new Source($contents, $filename);
@@ -74,26 +76,28 @@ class Polar
         $this->loadSources([new Source($str, $filename)]);
     }
 
-    public function query(Predicate|string $query, array $bindings = [], bool $acceptExpression = false): Query
+    public function query(Predicate|string $query, ?QueryOpts $opts = null): Query
     {
+        $opts ??= QueryOpts::default();
+
         $newHost = clone $this->host;
-        $newHost->setAcceptExpression($acceptExpression);
+        $newHost->setAcceptExpression($opts->acceptExpression);
 
         $ffiQuery = is_string($query)
             ? $this->ffiPolar->newQueryFromStr($query)
-            : $this->ffiPolar->newQueryFromTerm($newHost->toPolarTerm($query));
+            : $this->ffiPolar->newQueryFromTerm($newHost->toPolar($query));
 
-        return new Query($ffiQuery, $newHost, $bindings);
+        return new Query($ffiQuery, $newHost, $opts->bindings);
     }
 
-    public function queryRule(string $rule, array $bindings = [], bool $acceptExpression = false, ...$args): Query
+    public function queryRule(string $rule, ?QueryOpts $opts = null, ...$args): Query
     {
-        return $this->query(new Predicate($rule, ...$args), $bindings, $acceptExpression);
+        return $this->query(new Predicate($rule, ...$args), $opts);
     }
 
     public function queryRuleOnce(string $rule, ...$args): bool
     {
-        return $this->queryRule($rule, [], false, ...$args)->getIterator()->valid();
+        return $this->queryRule($rule, null, ...$args)->getIterator()->valid();
     }
 
     /**
@@ -112,7 +116,7 @@ class Polar
 
     public function registerConstant($value, string $name): void
     {
-        $this->ffiPolar->registerConstant($name, $this->host->toPolarTerm($value));
+        $this->ffiPolar->registerConstant($name, $this->host->toPolar($value));
     }
 
     /**
